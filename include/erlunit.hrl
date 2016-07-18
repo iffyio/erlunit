@@ -9,11 +9,12 @@
   (fun (BoolExpr) ->
     case BoolExpr of
       true -> ok;
-      V -> exit({assertion_failed, [{module,?MODULE},
+      V -> exit({erlunit_error,
+                {assertion_failed, [{module,?MODULE},
                                     {function, ?current_function()},
                                     {line, ?LINE},
                                     {expected, true},
-                                    {value,V}]})
+                                    {value,V}]}})
     end
   end)(BoolExpr)).
 
