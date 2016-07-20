@@ -18,7 +18,8 @@ test(Module) ->
 % return all test functions in given module
 get_test_functions(Module) ->
   Functions = Module:module_info(functions),
-  TestFuncs = [ Name || {Name, _Arithy} <- Functions,is_test_function(Name)],
+  TestFuncs = [ Name || {Name, _Arithy}
+              <- Functions,is_test_function(Name)],
   TestFuncs.
 
 
@@ -71,7 +72,7 @@ log_result(Result) ->
   Time = get_elapsed_time(Result),
   io:format("~p~nFinished in ~p seconds.~n",
             [string:copies("=", 60), Time]),
-  io:format("~p tests, ~p assertions, ~p failures, ~p errors~n",
+  io:format("~p tests, ~p passes, ~p failures, ~p errors~n",
             [Passed+Failed, Passed, Failed, Errors]).
 
 
