@@ -33,7 +33,14 @@ is_test_function(FuncName) ->
 % run a test case in a process.
 % monitor that process
 run_test_case(Module, Function) ->
-  erlang:monitor(process, spawn(Module, Function, [])).
+  spawn_monitor(fun() -> 
+                    case (catch Module:Function()) of
+                      ok -> ok; % all assertions passed
+                      {'EXIT', {assertion_failed, _}=Reason} -> % an assertion failed
+                        exit(Reason);
+                      Error -> exit(Error) % catch if function threw an error
+                    end
+                end).
 
 
 % listen for N processes to each finish running test case
@@ -46,8 +53,8 @@ listen(N, Result) ->
       case Reason of
         normal ->
             listen(N-1, incr(passed, Result));
-        {erlunit_error, Error} ->
-            log_failed_test_case(Error),
+        {assertion_failed, Details} ->
+            log_failed_test_case(Details),
             listen(N-1, incr(failed, Result));
         Error ->
             log_error(Error),
@@ -69,18 +76,18 @@ log_result(Result) ->
 
 
 % log details of a single failed test case
-log_failed_test_case({Reason, Assertion}) ->
+log_failed_test_case(Assertion) ->
   {M,F,L} = get_module_function_and_line(Assertion),
-  {Ex,Val} = get_expected_and_value(Assertion),
+  {Reason,Ex,Val} = get_expected_value_reason(Assertion),
   io:format("    **~p.erl: failed testcase**~n", [M]),
   io:format("~p in function ~p (line ~p)~n", [Reason,F,L]),
   io:format("<~p> expected but was <~p>~n",[Ex,Val]).
 
 
 % return expected and actual values for given assertion
-get_expected_and_value(Assertion) ->
-  [_,_,_,{expected,Ex},{value,Val}|_] = Assertion,
-  {Ex,Val}.
+get_expected_value_reason(Assertion) ->
+  [_,_,_,{reason, R},{expected,Ex},{value,Val}|_] = Assertion,
+  {R,Ex,Val}.
 
 
 % return module name, function and line number of assertion
@@ -88,13 +95,13 @@ get_module_function_and_line(Assertion) ->
     [{module, M},{function, F}, {line, L} | _] = Assertion,
     [_,Nameonly|_] = re:split(atom_to_list(F),
                               "^-(.+)/.+$",
+                              [{return,list}]),
+    {M, Nameonly, L}.
 
 
 % log details of unexpected error thrown by test case
 log_error(Error) ->
   io:format("~p~n",[Error]).
-                              [{return,list}]),
-    {M, Nameonly, L}.
 
 
 % return time difference from start

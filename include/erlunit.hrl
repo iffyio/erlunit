@@ -9,24 +9,11 @@
   (fun (BoolExpr) ->
     case BoolExpr of
       true -> ok;
-      V -> exit({erlunit_error,
-                {assertion_failed, [{module,?MODULE},
+      V -> exit({assertion_failed, [{module,?MODULE},
                                     {function, ?current_function()},
                                     {line, ?LINE},
+                                    {reason, assert_failed},
                                     {expected, true},
-                                    {value,V}]}})
-    end
-  end)(BoolExpr)).
-
--define (asserts(BoolExpr), 
-  (fun (BoolExpr) ->
-    %io:format("current function is ~p~n", [?current_function()]),
-    Function = ?current_function(),
-    case BoolExpr of
-      true -> ok;
-      V -> {Function,{assertion_failed, [{module,?MODULE},
-             {line, ?LINE},
-             {expected, true},
-             {value,V}]}}
+                                    {value,V}]})
     end
   end)(BoolExpr)).
