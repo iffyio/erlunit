@@ -1,8 +1,6 @@
 -module (erlunit).
--export ([run_tests/1]).
+-export ([run_tests/1, test/1]).
 
-run_etests(Module) ->
-  eunit:test(list_to_atom(hd(Module))).
 run_tests(Module) ->
   test(list_to_atom(hd(Module))).
 
@@ -72,7 +70,7 @@ log_result(Result) ->
   Time = get_elapsed_time(Result),
   io:format("~p~nFinished in ~p seconds.~n",
             [string:copies("=", 60), Time]),
-  io:format("~p tests, ~p passes, ~p failures, ~p errors~n",
+  io:format("~p tests, ~p passed, ~p failures, ~p errors~n",
             [Passed+Failed, Passed, Failed, Errors]).
 
 

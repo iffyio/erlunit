@@ -15,7 +15,7 @@ sum(Exp) ->
 
 ## Create test functions (optional in a new module)
 Use the -include directive to import assert macros from erlunit.hrl.  
-Test functions must end with **_test**  
+Test functions are 0-arity functions with a **_test** suffix  
 Create file **calculator_test.erl**
 
 ```erlang
@@ -38,7 +38,7 @@ c(calculator).
 c(calculator_test).
 c(erlunit).
 ```
-The erlunit:test/1 function runs all functions with names ending with **_test** in the specified module.  
+The erlunit:test/1 function runs all functions/0 with names ending with **_test** in the specified module.  
 
 ```erlang
 erlunit:test(calculator_test).
@@ -47,7 +47,7 @@ Output
 ```
 ===========================================================  
 Finished in 2.0e-5 seconds.  
-1 tests, 1 passes, 0 failures, 0 errors  
+1 tests, 1 passed, 0 failures, 0 errors  
 ```
 ## Test that fails
 Replace assert in **calculator_test** to fail the test  
