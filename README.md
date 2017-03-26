@@ -60,5 +60,8 @@ Recompile **calculator_test** and now the test fails with
     **calculator_test.erl: failed testcase**  
 assertEqual failed in function "sum_test" (line 10)  
 <6> expected but was <5>  
+============================================================  
+Finished in 0.004479 seconds.  
+1 tests, 0 passed, 1 failures, 0 errors  
 ```
 
